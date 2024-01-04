@@ -1,3 +1,4 @@
+from config import YT_API_KEY
 
 
 class Channel:
