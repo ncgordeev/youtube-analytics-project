@@ -9,17 +9,43 @@ class Channel:
 
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
-        self.channel_id = channel_id
+        self.__channel_id = channel_id
+        self.current_channel = self.get_channel_data()
+        self.set_attributes()
+
+    def set_attributes(self) -> None:
+        """Устанавливает атрибуты экземпляра."""
+        snippet = self.current_channel["items"][0]["snippet"]
+        statistics = self.current_channel["items"][0]["statistics"]
+
+        self.title = snippet["title"]
+        self.description = snippet["description"]
+        self.url = snippet["customUrl"]
+        self.subscriber_count = statistics["subscriberCount"]
+        self.video_count = statistics["videoCount"]
+        self.view_count = statistics["viewCount"]
 
     @classmethod
     def get_service(cls):
-        youtube_api_obj = build('youtube', 'v3', developerKey=YT_API_KEY)
-        return youtube_api_obj
+        """
+        Возвращает объект для работы с API
+        """
+        return build('youtube', 'v3', developerKey=YT_API_KEY)
+
+    @property
+    def channel_id(self) -> str:
+        return self.__channel_id
+
+    def get_channel_data(self):
+        """Метод для получения данных о канале по API"""
+        return self.get_service().channels().list(id=self.__channel_id, part='snippet,statistics').execute()
 
     def print_info(self) -> None:
         """Выводит в консоль информацию о канале."""
-        current_channel = youtube.channels().list(id=self.channel_id, part='snippet,statistics').execute()
-        print(json.dumps(current_channel, indent=2, ensure_ascii=False))
+        print(json.dumps(self.current_channel, indent=2, ensure_ascii=False))
 
-
-youtube = Channel.get_service()
+    def to_json(self):
+        """
+        Метод для сохранения данных атрибутов экземпляра класса
+        """
+        pass
