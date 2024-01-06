@@ -20,7 +20,7 @@ class Channel:
 
         self.title = snippet["title"]
         self.description = snippet["description"]
-        self.url = snippet["customUrl"]
+        self.url = f"https://www.youtube.com/channel/{self.__channel_id}"
         self.subscriber_count = statistics["subscriberCount"]
         self.video_count = statistics["videoCount"]
         self.view_count = statistics["viewCount"]
@@ -44,8 +44,22 @@ class Channel:
         """Выводит в консоль информацию о канале."""
         print(json.dumps(self.current_channel, indent=2, ensure_ascii=False))
 
-    def to_json(self):
+    def to_json(self, file_path: str) -> None:
         """
         Метод для сохранения данных атрибутов экземпляра класса
         """
-        pass
+        saving_data = {
+            "channel id": self.__channel_id,
+            "title": self.title,
+            "description": self.description,
+            "url": self.url,
+            "subscriber count": self.subscriber_count,
+            "video count": self.video_count,
+            "view count": self.view_count,
+        }
+        try:
+            with open(file_path, "w") as file:
+                json.dump(saving_data, file, indent=2, ensure_ascii=False)
+                file.write("\n")
+        except IOError as e:
+            print(f"Ошибка при записи в файл: {e}")
