@@ -28,32 +28,37 @@ class Channel:
     def __str__(self) -> str:
         return f"{self.title} ({self.url})"
 
+    def __operation(self, other, operator):
+        if not isinstance(other, self.__class__):
+            raise TypeError(f"Сравнивать можно только экземпляры класса {self.__class__.__name__}")
+        return operator(self.subscriber_count, other.subscriber_count)
+
     def __add__(self, other: int) -> int:
-        return self.subscriber_count + other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first + sub_count_second)
 
     def __radd__(self, other: int) -> int:
         return self.__add__(other)
 
     def __sub__(self, other: int) -> int:
-        return self.subscriber_count - other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first - sub_count_second)
 
     def __rsub__(self, other: int) -> int:
         return self.__sub__(other)
 
     def __gt__(self, other):
-        return self.subscriber_count > other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first > sub_count_second)
 
     def __ge__(self, other):
-        return self.subscriber_count >= other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first >= sub_count_second)
 
     def __lt__(self, other):
-        return self.subscriber_count < other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first < sub_count_second)
 
     def __le__(self, other):
-        return self.subscriber_count <= other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first <= sub_count_second)
 
     def __eq__(self, other):
-        return self.subscriber_count == other.subscriber_count
+        return self.__operation(other, lambda sub_count_first, sub_count_second: sub_count_first == sub_count_second)
 
     @classmethod
     def get_service(cls):
