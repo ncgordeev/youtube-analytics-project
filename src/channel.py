@@ -18,12 +18,42 @@ class Channel:
         snippet = self.current_channel["items"][0]["snippet"]
         statistics = self.current_channel["items"][0]["statistics"]
 
-        self.title = snippet["title"]
-        self.description = snippet["description"]
-        self.url = f"https://www.youtube.com/channel/{self.__channel_id}"
-        self.subscriber_count = statistics["subscriberCount"]
-        self.video_count = statistics["videoCount"]
-        self.view_count = statistics["viewCount"]
+        self.title: str = snippet["title"]
+        self.description: str = snippet["description"]
+        self.url: str = f"https://www.youtube.com/channel/{self.__channel_id}"
+        self.subscriber_count: int = int(statistics["subscriberCount"])
+        self.video_count: int = int(statistics["videoCount"])
+        self.view_count: int = int(statistics["viewCount"])
+
+    def __str__(self) -> str:
+        return f"{self.title} ({self.url})"
+
+    def __add__(self, other: int) -> int:
+        return self.subscriber_count + other.subscriber_count
+
+    def __radd__(self, other: int) -> int:
+        return self.__add__(other)
+
+    def __sub__(self, other: int) -> int:
+        return self.subscriber_count - other.subscriber_count
+
+    def __rsub__(self, other: int) -> int:
+        return self.__sub__(other)
+
+    def __gt__(self, other):
+        return self.subscriber_count > other.subscriber_count
+
+    def __ge__(self, other):
+        return self.subscriber_count >= other.subscriber_count
+
+    def __lt__(self, other):
+        return self.subscriber_count < other.subscriber_count
+
+    def __le__(self, other):
+        return self.subscriber_count <= other.subscriber_count
+
+    def __eq__(self, other):
+        return self.subscriber_count == other.subscriber_count
 
     @classmethod
     def get_service(cls):
