@@ -10,13 +10,13 @@ class Channel:
     def __init__(self, channel_id: str) -> None:
         """Экземпляр инициализируется id канала. Дальше все данные будут подтягиваться по API."""
         self.__channel_id = channel_id
-        self.current_channel = self.get_channel_data()
         self.set_attributes()
 
     def set_attributes(self) -> None:
         """Устанавливает атрибуты экземпляра."""
-        snippet = self.current_channel["items"][0]["snippet"]
-        statistics = self.current_channel["items"][0]["statistics"]
+        current_channel = self.get_channel_data()
+        snippet = current_channel["items"][0]["snippet"]
+        statistics = current_channel["items"][0]["statistics"]
 
         self.title: str = snippet["title"]
         self.description: str = snippet["description"]
