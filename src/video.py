@@ -23,25 +23,33 @@ class Video:
         return build('youtube', 'v3', developerKey=cls.api_key)
 
     def __str__(self):
-        return f"{self.video_title}"
+        return f"{self.title}"
 
     def video_info(self):
         """Информация о видео"""
         video_response = self.get_service().videos().list(part='snippet,statistics,contentDetails,topicDetails',
                                                           id=self.__video_id).execute()
-        self.video_title: str = video_response['items'][0]['snippet']['title']
-        self.video_description: str = video_response['items'][0]['snippet']['description']
-        self.video_url: str = f"https://youtu.be/{self.__video_id}"
-        self.view_count = int(video_response['items'][0]['statistics']['viewCount'])
-        self.like_count = int(video_response['items'][0]['statistics']['likeCount'])
-        self.comment_count = int(video_response['items'][0]['statistics']['commentCount'])
+        try:
+            self.title: str = video_response['items'][0]['snippet']['title']
+            self.video_description: str = video_response['items'][0]['snippet']['description']
+            self.video_url: str = f"https://youtu.be/{self.__video_id}"
+            self.view_count = int(video_response['items'][0]['statistics']['viewCount'])
+            self.like_count = int(video_response['items'][0]['statistics']['likeCount'])
+            self.comment_count = int(video_response['items'][0]['statistics']['commentCount'])
+        except IndexError:
+            self.title = None
+            self.video_description = None
+            self.video_url = None
+            self.view_count = None
+            self.like_count = None
+            self.comment_count = None
 
     def to_json(self, file_path):
         """Создание словаря с информацией о видео
         и запись в json файл"""
         info_video = {
             "id": self.__video_id,
-            "title": self.video_title,
+            "title": self.title,
             "description": self.video_description,
             "link": self.video_url,
             "view_count": self.view_count,
@@ -67,7 +75,7 @@ class PLVideo(Video):
         и запись в json файл"""
         info_video = {
             "id": self.video_id,
-            "title": self.video_title,
+            "title": self.title,
             "description": self.video_description,
             "link": self.video_url,
             "view_count": self.view_count,
